@@ -20,16 +20,16 @@
     "hot-functions",
     "runtime-optimization"
   ],
-  "author": "Jache Team",
+  "author": "Georgy Kravchenko",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/jache.git"
+    "url": "https://github.com/GeorgyKravchenko/Jache.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/jache/issues"
+    "url": "https://github.com/GeorgyKravchenko/Jache/issues"
   },
-  "homepage": "https://github.com/yourusername/jache#readme",
+  "homepage": "https://github.com/GeorgyKravchenko/Jache#readme",
   "engines": {
     "node": ">=14.0.0"
   },
