@@ -14,7 +14,7 @@ A smart runtime profiler for JS/TS with **safe optimizations** and **automatic m
 
 ### 🎯 Optimizations
 
-#### SmartProfiler
+#### Jache
 - **Automatic detection of slow functions** (by percentile)
 - **Safe memoization** for pure functions only
 - **Execution time profiling** with median, min/max
@@ -33,17 +33,15 @@ A smart runtime profiler for JS/TS with **safe optimizations** and **automatic m
 Jache/
 ├── src/
 │   ├── core/
-│   │   ├── smart-profiler.js    # Main profiler
-│   ├── jit/
-│   │   ├── advanced-jit.js      # Safe memoization
+│   │   └── smart-profiler.js    # Jache main class (core logic)
 │   └── test-functions/
-│       ├── basic.js             # Basic test functions
-│       └── advanced.js          # Advanced test functions
+│       ├── basic.js             # Basic test/demo functions
+│       └── advanced.js          # Advanced test/demo functions
 ├── examples/
-│   ├── smart-profiler-example.js # SmartProfiler usage example
+│   └── smart-profiler-example.js # Usage example
 ├── benchmarks/
 │   └── comprehensive-benchmark.js # Comprehensive benchmark
-├── index.js                     # Main API file
+├── index.js                     # Main API entry point
 └── README.md
 ```
 
@@ -58,16 +56,16 @@ npm install jache
 ### Basic usage
 
 ```javascript
-const { SmartProfiler } = require('jache');
+const { Jache } = require('jache');
 
-// Create a profiler
-const profiler = new SmartProfiler({
+// Create a Jache instance
+const jacheInstance = new Jache({
   minTimeMs: 1.0,           // Optimize functions slower than 1ms
   hotPercentile: 0.95       // 95th percentile for "hot" functions
 });
 
 // Profile a function
-const optimizedFn = profiler.profile(myFunction, 'myFunction', {
+const optimizedFn = jacheInstance.profile(myFunction, 'myFunction', {
   memoize: true             // Enable memoization for pure functions
 });
 
@@ -75,7 +73,7 @@ const optimizedFn = profiler.profile(myFunction, 'myFunction', {
 const result = optimizedFn(1, 2, 3);
 
 // Show statistics
-profiler.printHotFunctions(10);
+jacheInstance.printHotFunctions(10);
 ```
 
 ### Handy functions
@@ -90,7 +88,7 @@ const fastFn = profile(myFunction, 'myFunction', { memoize: true });
 ### Full example
 
 ```javascript
-const { SmartProfiler } = require('jache');
+const { Jache } = require('jache');
 
 // Recursive function (great for memoization)
 function fibonacci(n) {
@@ -98,11 +96,11 @@ function fibonacci(n) {
   return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
-// Create a profiler
-const profiler = new SmartProfiler({ minTimeMs: 0.1 });
+// Create a Jache instance
+const jacheInstance = new Jache({ minTimeMs: 0.1 });
 
 // Profile with memoization
-const optimizedFib = profiler.profile(fibonacci, 'fibonacci', { memoize: true });
+const optimizedFib = jacheInstance.profile(fibonacci, 'fibonacci', { memoize: true });
 
 // Test
 console.log('Without optimization:');
@@ -112,7 +110,7 @@ for (let i = 0; i < 10; i++) {
 }
 console.log(`Time: ${performance.now() - start1}ms`);
 
-console.log('\nWith SmartProfiler:');
+console.log('\nWith Jache:');
 const start2 = performance.now();
 for (let i = 0; i < 10; i++) {
   optimizedFib(20);
@@ -120,7 +118,7 @@ for (let i = 0; i < 10; i++) {
 console.log(`Time: ${performance.now() - start2}ms`);
 
 // Show stats
-profiler.printHotFunctions();
+jacheInstance.printHotFunctions();
 ```
 
 ## 📊 Benchmarks
@@ -140,7 +138,7 @@ npm test
 
 ### What is tested
 
-SmartProfiler tests various types of functions:
+Jache tests various types of functions:
 
 - **Recursive functions** - automatic memoization
 - **Expensive calculations** - performance profiling
@@ -159,19 +157,19 @@ const config = {
 
 ## 📈 API
 
-### SmartProfiler
+### Jache
 
 ```javascript
-const profiler = new SmartProfiler(config);
+const jacheInstance = new Jache(config);
 
 // Profile a function
-const optimizedFn = profiler.profile(fn, fnName, options);
+const optimizedFn = jacheInstance.profile(fn, fnName, options);
 
 // Get statistics
-const stats = profiler.getStats();
+const stats = jacheInstance.getStats();
 
 // Show hot functions
-profiler.printHotFunctions(topN = 10);
+jacheInstance.printHotFunctions(topN = 10);
 ```
 
 ### Profiling options
@@ -186,7 +184,7 @@ const options = {
 ### Statistics
 
 ```javascript
-const stats = profiler.getStats();
+const stats = jacheInstance.getStats();
 // Returns an array of objects:
 // {
 //   name: 'functionName',
@@ -214,7 +212,7 @@ const stats = profiler.getStats();
 
 ## 🔧 Safety
 
-SmartProfiler applies **only safe optimizations**:
+Jache applies **only safe optimizations**:
 
 - ✅ Memoization for pure functions
 - ✅ Profiling without code changes
