@@ -1,0 +1,43 @@
+{
+  "name": "jache",
+  "version": "1.0.0",
+  "description": "JS/TS Hot Function Profiler & Smart JIT Compiler with Safe Optimizations",
+  "main": "index.js",
+  "scripts": {
+    "test": "node benchmarks/comprehensive-benchmark.js",
+    "example": "node examples/smart-profiler-example.js",
+    "benchmark": "node benchmarks/comprehensive-benchmark.js",
+    "start": "node examples/smart-profiler-example.js"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "profiler",
+    "jit",
+    "optimization",
+    "performance",
+    "memoization",
+    "hot-functions",
+    "runtime-optimization"
+  ],
+  "author": "Jache Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/jache.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/jache/issues"
+  },
+  "homepage": "https://github.com/yourusername/jache#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "index.js",
+    "src/",
+    "examples/",
+    "benchmarks/",
+    "README.md"
+  ]
+} 
