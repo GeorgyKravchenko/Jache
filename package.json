@@ -1,7 +1,7 @@
 {
   "name": "jache",
-  "version": "1.0.0",
-  "description": "JS/TS Hot Function Profiler & Smart JIT Compiler with Safe Optimizations",
+  "version": "1.1.0",
+  "description": "JS/TS Optimizer",
   "main": "index.js",
   "scripts": {
     "test": "node benchmarks/comprehensive-benchmark.js",
@@ -18,7 +18,9 @@
     "performance",
     "memoization",
     "hot-functions",
-    "runtime-optimization"
+    "runtime-optimization",
+    "event-driven",
+    "monitoring"
   ],
   "author": "Georgy Kravchenko",
   "license": "MIT",
