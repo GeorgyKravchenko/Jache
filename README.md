@@ -2,12 +2,13 @@
 
 ## 🚀 What is it?
 
-A smart runtime profiler for JS/TS with **safe optimizations** and **automatic memoization** that tracks function performance and applies only proven optimizations.
+A smart runtime profiler for JS/TS with **safe optimizations**, **automatic memoization**, and **event-driven monitoring** that tracks function performance and applies only proven optimizations.
 
 ### 🔥 Features
 
 - **Smart profiling**: Tracks real execution time of functions
 - **Safe memoization**: Automatic memoization for pure recursive functions
+- **Event-driven monitoring**: Real-time insights with event listeners
 - **Performance statistics**: Detailed analytics with percentiles
 - **Minimal overhead**: Profiles only slow functions
 - **Simple API**: Easy to integrate into any project
@@ -19,10 +20,12 @@ A smart runtime profiler for JS/TS with **safe optimizations** and **automatic m
 - **Safe memoization** for pure functions only
 - **Execution time profiling** with median, min/max
 - **Configurable thresholds** for optimization
+- **Event-driven insights** for monitoring
 
 #### Safe optimizations
 - ✅ **Memoization** - for pure recursive functions
 - ✅ **Profiling** - no code changes
+- ✅ **Event monitoring** - real-time insights
 - ❌ **NO dangerous AST transforms**
 - ❌ **NO map/filter/reduce optimizations**
 - ❌ **NO strength reduction**
@@ -32,13 +35,10 @@ A smart runtime profiler for JS/TS with **safe optimizations** and **automatic m
 ```
 Jache/
 ├── src/
-│   ├── core/
-│   │   └── smart-profiler.js    # Jache main class (core logic)
-│   └── test-functions/
-│       ├── basic.js             # Basic test/demo functions
-│       └── advanced.js          # Advanced test/demo functions
+│   └── core/
+│       └── smart-profiler.js    # Jache main class (core logic)
 ├── examples/
-│   └── smart-profiler-example.js # Usage example
+│   └── smart-profiler-example.js # Usage example with events
 ├── benchmarks/
 │   └── comprehensive-benchmark.js # Comprehensive benchmark
 ├── index.js                     # Main API entry point
@@ -64,6 +64,21 @@ const jacheInstance = new Jache({
   hotPercentile: 0.95       // 95th percentile for "hot" functions
 });
 
+// Event-driven monitoring
+jacheInstance.on('profile', (fnName, data) => {
+  if (data.time > 10) {
+    console.log(`🐌 ${fnName} slow: ${data.time}ms`);
+  }
+});
+
+jacheInstance.on('threshold', (fnName, time) => {
+  console.log(`⚠️ ${fnName} exceeded threshold: ${time}ms`);
+});
+
+jacheInstance.on('optimization', (fnName, type) => {
+  console.log(`✨ ${fnName} optimized with ${type}`);
+});
+
 // Profile a function
 const optimizedFn = jacheInstance.profile(myFunction, 'myFunction', {
   memoize: true             // Enable memoization for pure functions
@@ -72,8 +87,9 @@ const optimizedFn = jacheInstance.profile(myFunction, 'myFunction', {
 // Use as a regular function
 const result = optimizedFn(1, 2, 3);
 
-// Show statistics
-jacheInstance.printHotFunctions(10);
+// Get statistics
+const stats = jacheInstance.getStats();
+console.log(stats);
 ```
 
 ### Handy functions
@@ -85,7 +101,7 @@ const { profile } = require('jache');
 const fastFn = profile(myFunction, 'myFunction', { memoize: true });
 ```
 
-### Full example
+### Full example with events
 
 ```javascript
 const { Jache } = require('jache');
@@ -96,8 +112,23 @@ function fibonacci(n) {
   return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
-// Create a Jache instance
+// Create a Jache instance with event monitoring
 const jacheInstance = new Jache({ minTimeMs: 0.1 });
+
+// Set up event listeners
+jacheInstance.on('profile', (fnName, data) => {
+  if (data.time > 5) {
+    console.log(`🐌 ${fnName}: ${data.time.toFixed(2)}ms (call #${data.callCount})`);
+  }
+});
+
+jacheInstance.on('threshold', (fnName, time) => {
+  console.log(`⚠️ ${fnName} exceeded threshold: ${time.toFixed(2)}ms`);
+});
+
+jacheInstance.on('optimization', (fnName, type) => {
+  console.log(`✨ ${fnName} optimized with ${type}`);
+});
 
 // Profile with memoization
 const optimizedFib = jacheInstance.profile(fibonacci, 'fibonacci', { memoize: true });
@@ -118,7 +149,11 @@ for (let i = 0; i < 10; i++) {
 console.log(`Time: ${performance.now() - start2}ms`);
 
 // Show stats
-jacheInstance.printHotFunctions();
+const stats = jacheInstance.getStats();
+console.log('\nFunction Statistics:');
+stats.forEach(s => {
+  console.log(`${s.name.padEnd(15)} | hot: ${s.hot?.toFixed(2) ?? '-'}ms | median: ${s.median?.toFixed(2) ?? '-'}ms | calls: ${s.count}`);
+});
 ```
 
 ## 📊 Benchmarks
@@ -151,7 +186,8 @@ Jache tests various types of functions:
 const config = {
   minTimeMs: 1.0,              // Minimum time for optimization (ms)
   hotPercentile: 0.95,         // Percentile for "hot" functions
-  safeOptimizations: true      // Only safe optimizations
+  safeOptimizations: true,     // Only safe optimizations
+  historySize: 1000            // Call history size for analytics
 };
 ```
 
@@ -168,8 +204,10 @@ const optimizedFn = jacheInstance.profile(fn, fnName, options);
 // Get statistics
 const stats = jacheInstance.getStats();
 
-// Show hot functions
-jacheInstance.printHotFunctions(topN = 10);
+// Event listeners
+jacheInstance.on('profile', (fnName, data) => {});
+jacheInstance.on('threshold', (fnName, time) => {});
+jacheInstance.on('optimization', (fnName, type) => {});
 ```
 
 ### Profiling options
@@ -179,6 +217,25 @@ const options = {
   memoize: true,        // Enable memoization for pure functions
   percentile: 0.95      // Percentile for analysis (default 0.95)
 };
+```
+
+### Event Types
+
+```javascript
+// 'profile' - every function call
+jacheInstance.on('profile', (fnName, data) => {
+  // data: { time: number, args: any[], callCount: number }
+});
+
+// 'threshold' - function exceeded time threshold
+jacheInstance.on('threshold', (fnName, time) => {
+  // time: execution time in milliseconds
+});
+
+// 'optimization' - optimization applied
+jacheInstance.on('optimization', (fnName, type) => {
+  // type: 'memoization' or other optimization types
+});
 ```
 
 ### Statistics
@@ -192,7 +249,8 @@ const stats = jacheInstance.getStats();
 //   hot: 1.2,           // 95th percentile
 //   min: 0.1,           // Minimum time
 //   max: 5.0,           // Maximum time
-//   count: 100          // Call count
+//   count: 100,         // Call count
+//   history: [...]      // Execution time history
 // }
 ```
 
@@ -203,6 +261,7 @@ const stats = jacheInstance.getStats();
 - Expensive calculations
 - Functions called with the same parameters
 - Performance profiling
+- Real-time monitoring
 
 ### ❌ Not for:
 - Functions with side effects
@@ -216,6 +275,7 @@ Jache applies **only safe optimizations**:
 
 - ✅ Memoization for pure functions
 - ✅ Profiling without code changes
+- ✅ Event monitoring
 - ❌ No AST transforms
 - ❌ No automatic refactoring
 - ❌ No logic changes

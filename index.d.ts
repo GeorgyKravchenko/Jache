@@ -7,6 +7,7 @@ export interface SmartProfilerOptions {
   minTimeMs?: number;
   safeOptimizations?: boolean;
   historySize?: number;
+  profileAfter?: number;
 }
 
 export interface ProfileOptions {
@@ -14,6 +15,7 @@ export interface ProfileOptions {
   minTimeMs?: number;
   percentile?: number;
   historySize?: number;
+  profileAfter?: number;
 }
 
 export interface FunctionStats {
@@ -23,8 +25,13 @@ export interface FunctionStats {
   min: number;
   max: number;
   count: number;
-  histogram: number[];
   history: number[];
+}
+
+export interface ProfileEvent {
+  time: number;
+  args: any[];
+  callCount: number;
 }
 
 export class SmartProfiler {
@@ -32,25 +39,32 @@ export class SmartProfiler {
   profile<T extends (...args: any[]) => any>(fn: T, name: string, opts?: ProfileOptions): T;
   setThresholds(name: string, thresholds: { minTimeMs?: number; percentile?: number }): void;
   getStats(): FunctionStats[];
-  printHotFunctions(topN?: number): void;
+  on(event: 'profile', listener: (fnName: string, data: ProfileEvent) => void): this;
+  on(event: 'threshold', listener: (fnName: string, time: number) => void): this;
+  on(event: 'optimization', listener: (fnName: string, type: string) => void): this;
+  on(event: string, listener: (...args: any[]) => void): this;
+  off(event: string, listener: (...args: any[]) => void): this;
+  emit(event: string, ...args: any[]): boolean;
 }
 
-export class AdvancedJit {
-  compile<T extends (...args: any[]) => any>(fn: T, fnName: string): Promise<T>;
-}
-
+// Legacy alias for backward compatibility
 export interface JacheConfig extends SmartProfilerOptions {}
 
 export class Jache {
   constructor(config?: JacheConfig);
   profile<T extends (...args: any[]) => any>(fn: T, fnName: string, options?: ProfileOptions): T;
   getStats(): FunctionStats[];
-  printHotFunctions(topN?: number): void;
   reset(): void;
-  on(event: string, callback: (...args: any[]) => void): void;
-  off(event: string, callback: (...args: any[]) => void): void;
+  on(event: 'profile', listener: (fnName: string, data: ProfileEvent) => void): this;
+  on(event: 'threshold', listener: (fnName: string, time: number) => void): this;
+  on(event: 'optimization', listener: (fnName: string, type: string) => void): this;
+  on(event: string, listener: (...args: any[]) => void): this;
+  off(event: string, listener: (...args: any[]) => void): this;
+  emit(event: string, ...args: any[]): boolean;
 }
 
+// Quick start function
 export function profile<T extends (...args: any[]) => any>(fn: T, fnName: string, options?: ProfileOptions): T;
 
+// Default configuration
 export const defaultConfig: JacheConfig; 
